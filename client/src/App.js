@@ -61,6 +61,27 @@ class App extends Component {
     this.placesService.textSearch(request, (results, status) => {
       if (status == google.maps.places.PlacesServiceStatus.OK) {
         console.log(results);
+        if (results.length > 0) {
+          let first = results[0];
+
+          const newMarkers = [
+            {
+              position: {
+                lat: first.geometry.location.lat(),
+                lng: first.geometry.location.lng()
+              },
+              key: first.name,
+              defaultAnimation: 2,
+            }
+          ];
+          this.setState({
+            markers: newMarkers
+          });
+
+          let viewport = first.geometry.viewport;
+          var bounds = new google.maps.LatLngBounds(viewport.getSouthWest(), viewport.getNorthEast());
+          this._mapComponent.fitBounds(bounds);
+        }
       }
     });
 
