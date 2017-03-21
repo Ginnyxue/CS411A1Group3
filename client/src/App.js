@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {
   withGoogleMap,
   GoogleMap,
-  Marker,
+  Marker
 } from "react-google-maps";
 
 /*
@@ -27,7 +27,6 @@ const GettingStartedGoogleMap = withGoogleMap(props => (
   </GoogleMap>
 ));
 
-
 class App extends Component {
   constructor(props) {
     super(props);
@@ -41,14 +40,14 @@ class App extends Component {
         },
         key: `Taiwan`,
         defaultAnimation: 2,
-      }],
+      }]
     };
-
   }
 
   handleMapLoad = this.handleMapLoad.bind(this);
   handleMapClick = this.handleMapClick.bind(this);
   handleMarkerRightClick = this.handleMarkerRightClick.bind(this);
+
   handleChange = (event) => {
     this.setState({
       value: event.target.value
@@ -56,11 +55,17 @@ class App extends Component {
   };
 
   handleSubmit = (event) => {
+    let request = {
+      query: this.state.value
+    };
+    this.placesService.textSearch(request, (results, status) => {
+      if (status == google.maps.places.PlacesServiceStatus.OK) {
+        console.log(results);
+      }
+    });
 
-    alert('Submitted: ' + this.state.value);
     event.preventDefault();
-  }
-    ;
+  };
 
 
   handleMapLoad(map) {
@@ -68,6 +73,8 @@ class App extends Component {
     this._mapComponent = map;
     if (map) {
       console.log(map.getZoom());
+      console.log(map);
+      this.placesService = new google.maps.places.PlacesService(map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED);
     }
   }
 
@@ -113,9 +120,10 @@ class App extends Component {
     return (<div>
       <h1>Api Prototype</h1>
       <form onSubmit={this.handleSubmit}>
-        <input type="text"
-               value={this.state.value}
-               onChange={this.handleChange}/>
+        <input
+          type="text"
+          value={this.state.value}
+          onChange={this.handleChange}/>
         <input type="submit" value="Submit"/>
       </form>
       <GettingStartedGoogleMap
