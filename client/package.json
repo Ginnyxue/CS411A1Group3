@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "react": "^15.4.2",
-    "react-dom": "^15.4.2"
+    "react-dom": "^15.4.2",
+    "react-google-maps": "^6.0.1"
   },
   "devDependencies": {
     "nwb": "0.15.x"
