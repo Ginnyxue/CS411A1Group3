@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
- import {
+import {
   withGoogleMap,
   GoogleMap,
   Marker,
@@ -15,7 +15,7 @@ const GettingStartedGoogleMap = withGoogleMap(props => (
   <GoogleMap
     ref={props.onMapLoad}
     defaultZoom={3}
-    defaultCenter={{ lat: -25.363882, lng: 131.044922 }}
+    defaultCenter={{lat: -25.363882, lng: 131.044922}}
     onClick={props.onMapClick}
   >
     {props.markers.map(marker => (
@@ -26,7 +26,6 @@ const GettingStartedGoogleMap = withGoogleMap(props => (
     ))}
   </GoogleMap>
 ));
-  
 
 
 class App extends Component {
@@ -36,17 +35,18 @@ class App extends Component {
     this.state = {
       value: '',
       markers: [{
-      position: {
-        lat: 25.0112183,
-        lng: 121.52067570000001,
-      },
-      key: `Taiwan`,
-      defaultAnimation: 2,
-    }],
-  };
+        position: {
+          lat: 25.0112183,
+          lng: 121.52067570000001,
+        },
+        key: `Taiwan`,
+        defaultAnimation: 2,
+      }],
+    };
 
   }
- handleMapLoad = this.handleMapLoad.bind(this);
+
+  handleMapLoad = this.handleMapLoad.bind(this);
   handleMapClick = this.handleMapClick.bind(this);
   handleMarkerRightClick = this.handleMarkerRightClick.bind(this);
   handleChange = (event) => {
@@ -56,12 +56,11 @@ class App extends Component {
   };
 
   handleSubmit = (event) => {
-    
+
     alert('Submitted: ' + this.state.value);
     event.preventDefault();
   }
-  ;
- 
+    ;
 
 
   handleMapLoad(map) {
@@ -120,17 +119,22 @@ class App extends Component {
         <input type="submit" value="Submit"/>
       </form>
       <GettingStartedGoogleMap
-          containerElement={
-            <div style={{ height: `100%` }} />
-          }
-          mapElement={
-            <div style={{ height: `100%` }} />
-          }
-          onMapLoad={this.handleMapLoad}
-          onMapClick={this.handleMapClick}
-          markers={this.state.markers}
-          onMarkerRightClick={this.handleMarkerRightClick}
-        />
+        containerElement={
+          <div style={{
+            height: 600,
+            width: 600
+          }}/>
+        }
+        mapElement={
+          <div style={{
+            height: `100%`
+          }}/>
+        }
+        onMapLoad={this.handleMapLoad}
+        onMapClick={this.handleMapClick}
+        markers={this.state.markers}
+        onMarkerRightClick={this.handleMarkerRightClick}
+      />
     </div>);
   }
 }
