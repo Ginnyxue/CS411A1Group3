@@ -1,9 +1,6 @@
-import React, {Component} from 'react';
-import {
-  withGoogleMap,
-  GoogleMap,
-  Marker
-} from "react-google-maps";
+import React, {Component} from "react";
+import {GoogleMap, Marker, withGoogleMap} from "react-google-maps";
+import {sendTestRequest} from "./api";
 
 /*
  * This is the modify version of:
@@ -40,7 +37,8 @@ class App extends Component {
         },
         key: `Taiwan`,
         defaultAnimation: 2,
-      }]
+      }],
+      response: ''
     };
   }
 
@@ -83,6 +81,12 @@ class App extends Component {
           this._mapComponent.fitBounds(bounds);
         }
       }
+    });
+
+    sendTestRequest(request.query).then(json => {
+      this.setState({
+        response: json
+      });
     });
 
     event.preventDefault();
@@ -164,6 +168,9 @@ class App extends Component {
         markers={this.state.markers}
         onMarkerRightClick={this.handleMarkerRightClick}
       />
+      <pre>
+        {JSON.stringify(this.state.response, null, 2)}
+      </pre>
     </div>);
   }
 }
