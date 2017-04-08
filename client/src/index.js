@@ -1,25 +1,25 @@
-import React from 'react';
-import {render} from 'react-dom';
-import {
-  BrowserRouter as Router,
-  Route,
-  Link
-} from 'react-router-dom'
+import React from "react";
+import {render} from "react-dom";
+import {BrowserRouter, Link, Route} from "react-router-dom";
 
-import App from './App';
-import SearchPage from './SearchPage';
+import App from "./App";
+import SearchPage from "./SearchPage";
+import JobListPage from "./JobListPage";
 
 render(
-  (<Router>
+  (<BrowserRouter>
     <div>
       <ul>
         <li><Link to="/">Home</Link></li>
         <li><Link to="/search">Search</Link></li>
+        <li><Link to="/jobs">Jobs</Link></li>
       </ul>
 
       <hr/>
 
       <Route exact path="/" component={App}/>
       <Route path="/search" component={SearchPage}/>
+      <Route path="/jobs" component={JobListPage}/>
     </div>
-  </Router>), document.querySelector('#app'));
+  </BrowserRouter>),
+  document.querySelector('#app'));
