@@ -5,8 +5,8 @@ export function checkHttpResponseStatus(response) {
     let error = new Error(response.status);
     error.response = response;
     throw error;
-  };
-};
+  }
+}
 
 export function createJsonPostRequest(body) {
   return {
@@ -14,10 +14,10 @@ export function createJsonPostRequest(body) {
     headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
     body: JSON.stringify(body)
   };
-};
+}
 
 export function sendTestRequest(data) {
   return fetch("_/test?data=" + data)
     .then(checkHttpResponseStatus)
     .then(response => response.json());
-};
+}
