@@ -12,6 +12,7 @@
     "test:watch": "nwb test-react --server"
   },
   "dependencies": {
+    "query-string": "^4.3.2",
     "react": "^15.5.2",
     "react-dom": "^15.5.0",
     "react-google-maps": "^6.0.1",

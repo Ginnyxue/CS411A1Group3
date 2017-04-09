@@ -1,6 +1,8 @@
 import React, {Component} from "react";
 import {GoogleMap, Marker, withGoogleMap} from "react-google-maps";
 import {sendTestRequest} from "./api";
+import {stringify as encodeQuery} from "query-string";
+import SearchPanel from "./SearchPanel";
 
 const GettingStartedGoogleMap = withGoogleMap(props => (
   <GoogleMap
@@ -17,6 +19,8 @@ const GettingStartedGoogleMap = withGoogleMap(props => (
     ))}
   </GoogleMap>
 ));
+
+const BASE_URL = "/search";
 
 class SearchPage extends Component {
   constructor(props) {
@@ -92,7 +96,6 @@ class SearchPage extends Component {
   };
 
   handleMapClick = (event) => {
-    console.log("Hello! I am here! For click");
     const nextMarkers = [
       ...this.state.markers,
       {
@@ -130,6 +133,12 @@ class SearchPage extends Component {
           onChange={this.handleChange}/>
         <input type="submit" value="Submit"/>
       </form>
+      <SearchPanel
+        searchQuery={this.props.location.search}
+        onSubmit={(data) => {
+          let url = BASE_URL + "?" + encodeQuery(data);
+          this.props.history.push(url);
+        }}/>
       <GettingStartedGoogleMap
         containerElement={
           <div style={{
@@ -153,5 +162,7 @@ class SearchPage extends Component {
     </div>);
   }
 }
+
+SearchPage.BASE_URL = BASE_URL;
 
 export default SearchPage;
