@@ -17,7 +17,7 @@ export function createJsonPostRequest(body) {
 }
 
 export function sendTestRequest(data) {
-  return fetch("_/test?data=" + data)
+  return fetch("_/test?keywords=" + encodeURIComponent(data))
     .then(checkHttpResponseStatus)
     .then(response => response.json());
 }
