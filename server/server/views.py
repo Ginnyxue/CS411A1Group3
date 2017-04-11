@@ -7,3 +7,4 @@ def test(request):
         'data': data,
         'ping': 'pong'}
     )
+

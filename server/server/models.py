@@ -7,3 +7,6 @@ from django.db import models
 class SearchResult(models.Model):
     search = models.CharField(max_length=200)
     result = models.CharField(max_length=2000)
+
+    def __str__(self):
+    	return self.search + self.result
