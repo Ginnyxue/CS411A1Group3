@@ -1,25 +1,22 @@
 import React from "react";
 import {render} from "react-dom";
-import {Link, Route, BrowserRouter} from "react-router-dom";
+import {BrowserRouter, Route} from "react-router-dom";
 
 import App from "./App";
-import SearchPage from "./SearchPage";
+import SearchPage from "./search/SearchPage";
 import JobListPage from "./JobListPage";
 import JobForms from "./JobForms";
+import NavBar from "./NavBar";
 
 
 render(
   (<BrowserRouter>
-    <div>
-      <ul>
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/search">Search</Link></li>
-        <li><Link to="/jobs">Jobs</Link></li>
-        <li><Link to="/forms">Forms</Link></li>
-      </ul>
-
-      <hr/>
-
+    <div style={{
+      height: "100%",
+      display: "flex",
+      flexFlow: "column",
+    }}>
+      <NavBar/>
       <Route exact path="/" component={App}/>
       <Route path="/search" component={SearchPage}/>
       <Route path="/jobs" component={JobListPage}/>
