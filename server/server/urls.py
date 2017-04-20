@@ -19,7 +19,7 @@ from revproxy.views import ProxyView
 from . import views
 
 urlpatterns = [
-    url(r'^_/test', views.test, name='test'),
+    url(r'^_/jobs', views.jobs, name='jobs'),
     url(r'^admin/', admin.site.urls),
     url(r'^(?P<path>.*)$', ProxyView.as_view(upstream='http://localhost:3000/')),
 ]

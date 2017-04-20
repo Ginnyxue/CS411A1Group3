@@ -1,3 +1,5 @@
+import {parse as parseQuery, stringify as encodeQuery} from "query-string";
+
 export function checkHttpResponseStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response;
@@ -16,8 +18,12 @@ export function createJsonPostRequest(body) {
   };
 }
 
-export function sendTestRequest(data) {
-  return fetch("_/test?keywords=" + encodeURIComponent(data))
+export function sendJobsRequest(job, location) {
+  let params = {
+    job: job,
+    location: location
+  };
+  return fetch("_/jobs?" + encodeQuery(params))
     .then(checkHttpResponseStatus)
     .then(response => response.json());
 }

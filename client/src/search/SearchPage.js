@@ -5,6 +5,8 @@ import {parse as parseQuery, stringify as encodeQuery} from "query-string";
 import SearchPanel from "./SearchPanel";
 import costs from "../../public/costs.json";
 import {Checkbox} from "semantic-ui-react";
+import {sendJobsRequest} from "../api";
+import JobMarker from "./JobMarker";
 
 const BASE_URL = "/search";
 
@@ -21,7 +23,8 @@ class SearchPage extends Component {
         lng: 0
       },
       zoom: 11,
-      showCost: true
+      showCost: true,
+      jobs: []
     }
   }
 
@@ -59,7 +62,18 @@ class SearchPage extends Component {
       }
     });
 
-    // TODO(doug) - Do a search for the jobs
+    // Do a search for the jobs
+    sendJobsRequest(job, location).then(results => {
+      console.log(results);
+      for (let i = 0; i < results.jobs.length; i++) {
+        if (results.jobs[i].jobtitle == "Data Analyst") {
+          console.log(i);
+        }
+      }
+      this.setState({
+        jobs: results.jobs
+      });
+    });
   };
 
   handleGoogleMapLoad = ({map, maps}) => {
@@ -98,6 +112,21 @@ class SearchPage extends Component {
   render() {
     let queryParams = parseQuery(this.props.location.search);
 
+
+    const markers = this.state.jobs.filter((job) => {
+      if (job.latitude && job.longitude) {
+        return true;
+      }
+      return false;
+    }).map((job) => {
+      return <JobMarker
+        lat={job.latitude}
+        lng={job.longitude}
+        key={job.jobkey}
+        job={job}
+      />;
+    });
+
     return (<div style={{
       flex: 1,
       display: "flex",
@@ -113,12 +142,19 @@ class SearchPage extends Component {
         onGoogleApiLoaded={this.handleGoogleMapLoad}
         yesIWantToUseGoogleMapApiInternals
       >
+        {markers}
       </GoogleMapReact>
       <Checkbox
         name="showCost"
         checked={this.state.showCost}
         onChange={this.handleToggleHeatmap}
         label='Show Cost of Living'/>
+      <span id="indeed_at">
+        <a title="Job Search" href="https://www.indeed.com" rel="nofollow">
+            jobs by
+          <img alt="Indeed" src="https://www.indeed.com/p/jobsearch.gif" style={{border: 0, verticalAlign: "middle"}}/>
+        </a>
+      </span>
     </div>);
   }
 }
