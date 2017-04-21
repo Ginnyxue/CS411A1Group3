@@ -19,19 +19,21 @@ class JobMarker extends React.Component {
   }
 
   render() {
-    return (<div>
+    return (<div style={markerStyle}>
+    </div>);
+    /*
       <Popup
         hoverable={true}
         trigger={<div style={markerStyle}/>}
       >
         <Popup.Header>
-          {this.props.job.jobtitle}
         </Popup.Header>
         <Popup.Content>
           {this.props.job.snippet}
         </Popup.Content>
       </Popup>
     </div>);
+    */
   }
 }
 

@@ -41,7 +41,7 @@ def indeed_query(job, location, user_ip, user_agent):
     all_jobs = []
     start = 0
     num_requests = 0
-    while start < 100:
+    while start < 10000:
         query = {
             'publisher': indeed_key,
             'v': 2,
@@ -60,7 +60,7 @@ def indeed_query(job, location, user_ip, user_agent):
         all_jobs += response['results']
         start = response['end'] + 1
 
-        if len(response['results']) < 25 or num_requests > 50 or len(all_jobs) > 100:
+        if len(response['results']) < 25:
             break
 
     return all_jobs

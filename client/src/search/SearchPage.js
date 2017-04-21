@@ -6,7 +6,6 @@ import SearchPanel from "./SearchPanel";
 import costs from "../../public/costs.json";
 import {Checkbox} from "semantic-ui-react";
 import {sendJobsRequest} from "../api";
-import JobMarker from "./JobMarker";
 
 const BASE_URL = "/search";
 
@@ -17,6 +16,7 @@ class SearchPage extends Component {
   constructor(props) {
     super(props);
 
+    this.markers = [];
     this.state = {
       center: {
         lat: 51.5,
@@ -25,7 +25,7 @@ class SearchPage extends Component {
       zoom: 11,
       showCost: true,
       jobs: []
-    }
+    };
   }
 
   handleSearch = (job, location) => {
@@ -65,14 +65,11 @@ class SearchPage extends Component {
     // Do a search for the jobs
     sendJobsRequest(job, location).then(results => {
       console.log(results);
-      for (let i = 0; i < results.jobs.length; i++) {
-        if (results.jobs[i].jobtitle == "Data Analyst") {
-          console.log(i);
-        }
-      }
+
       this.setState({
         jobs: results.jobs
       });
+      this.updateMapMarkers();
     });
   };
 
@@ -89,6 +86,47 @@ class SearchPage extends Component {
     const location = (queryParams[FIELD_LOCATION] ? queryParams[FIELD_LOCATION] : "");
     if (job && location) {
       this.doSearch(job, location);
+    }
+  };
+
+  updateMapMarkers = () => {
+    if (this.map) {
+      this.markers.forEach((marker) => {
+        marker.setMap(null);
+      });
+      this.markers = null;
+
+      this.markers = this.state.jobs.filter((job) => {
+        if (job.latitude && job.longitude) {
+          return true;
+        }
+        return false;
+      }).map((job) => {
+
+        const contentWindow = '<div>' +
+            '<h1>' + job.jobtitle + '</h1>' +
+            '<p>' + job.snippet + '</p>' +
+            '</div>';
+
+        let infoWindow = new google.maps.InfoWindow({
+          content: contentWindow
+        });
+
+        let marker = new google.maps.Marker({
+          position: {
+            lat: job.latitude,
+            lng: job.longitude
+          },
+          map: this.map,
+          title: job.title
+        });
+
+        marker.addListener('click', () => {
+          infoWindow.open(this.map, marker);
+        });
+
+        return marker;
+      });
     }
   };
 
@@ -113,20 +151,6 @@ class SearchPage extends Component {
     let queryParams = parseQuery(this.props.location.search);
 
 
-    const markers = this.state.jobs.filter((job) => {
-      if (job.latitude && job.longitude) {
-        return true;
-      }
-      return false;
-    }).map((job) => {
-      return <JobMarker
-        lat={job.latitude}
-        lng={job.longitude}
-        key={job.jobkey}
-        job={job}
-      />;
-    });
-
     return (<div style={{
       flex: 1,
       display: "flex",
@@ -142,7 +166,6 @@ class SearchPage extends Component {
         onGoogleApiLoaded={this.handleGoogleMapLoad}
         yesIWantToUseGoogleMapApiInternals
       >
-        {markers}
       </GoogleMapReact>
       <Checkbox
         name="showCost"
