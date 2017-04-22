@@ -4,9 +4,9 @@ import urllib2
 from urllib import urlencode
 
 from careerjet_api_client import CareerjetAPIClient
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
 
-from models import SearchResult
+from models import SearchResult, SavedJob, Job, User
 
 careerjet_key = os.environ.get('CAREERJET_KEY')
 cj = CareerjetAPIClient("en_US")
@@ -41,7 +41,7 @@ def indeed_query(job, location, user_ip, user_agent):
     all_jobs = []
     start = 0
     num_requests = 0
-    while start < 10000:
+    while start < 1000:
         query = {
             'publisher': indeed_key,
             'v': 2,
@@ -64,6 +64,22 @@ def indeed_query(job, location, user_ip, user_agent):
             break
 
     return all_jobs
+
+
+def indeed_single_job_query(job_id, user_ip, user_agent):
+    query = {
+        'publisher': indeed_key,
+        'v': 2,
+        'format': 'json',
+        'latlong': 1,
+        'userip': user_ip,
+        'useragent': user_agent,
+        'jobkeys': job_id
+    }
+    url = "http://api.indeed.com/ads/apigetjobs?" + urlencode(query)
+    response = json.loads(urllib2.urlopen(url).read())
+
+    return response['results']
 
 
 def jobs(request):
@@ -92,3 +108,98 @@ def jobs(request):
     return JsonResponse({
         'jobs': json.loads(results[0].result)
     })
+
+
+def save_job(request):
+    # TODO
+    user_id = 0
+    users = User.objects.filter(id=user_id)
+    if len(users) == 0:
+        return HttpResponseBadRequest()
+    user = users[0]
+
+    job_id = request.GET.get('jobid')
+    if job_id == None:
+        return HttpResponseBadRequest()
+
+    # Check if job is already saved
+    results = SavedJob.objects.filter(job_id=job_id)
+    if len(results) == 0:
+        # Save job
+        new_saved = SavedJob(user_id=user, job_id=job_id)
+        new_saved.save()
+
+    return HttpResponse(status=204)
+
+
+def get_saved_jobs(request):
+    # TODO
+    user_id = 0
+    users = User.objects.filter(id=user_id)
+    if len(users) == 0:
+        return HttpResponseBadRequest()
+    user = users[0]
+
+    # Get saved jobs
+    saved = SavedJob.objects.filter(user_id=user)
+
+    # Convert saved entries into jobs
+    job_data = []
+    for saved_job in saved:
+        job = _get_job(request, saved_job.job_id)
+        if job is not None:
+            job_data.append(job)
+
+    return JsonResponse({
+        'jobs': job_data
+    })
+
+
+def delete_saved_job(request):
+    # TODO
+    user_id = 0
+    users = User.objects.filter(id=user_id)
+    if len(users) == 0:
+        return HttpResponseBadRequest()
+    user = users[0]
+
+    job_id = request.GET.get('jobid')
+    if job_id is None:
+        return HttpResponseBadRequest()
+
+    # Check if job is already saved
+    results = SavedJob.objects.filter(user_id=user, job_id=job_id)
+    for res in results:
+        res.delete()
+
+    return HttpResponse(status=204)
+
+
+def _get_job(request, job_id):
+    user_ip = request.GET.get('user_ip', '11.22.33.44')
+    url = request.GET.get('url', 'http://www.example.com/jobsearch?q=python&l=london')
+    user_agent = request.GET.get('user_agent', 'Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Firefox/31.0')
+
+    # Get job
+    jobs = Job.objects.filter(job_id=job_id)
+    if len(jobs) > 0:
+        # Have cached job, return data
+        job = jobs[0]
+        return json.loads(job.data)
+
+    # Get data from API
+    response = indeed_single_job_query(job_id, user_ip, user_agent)
+    if len(response) > 0:
+        new_job = Job(job_id=job_id,
+                      data=json.dumps(response[0], sort_keys=True, indent=0, separators=(',', ': ')))
+        new_job.save()
+        return json.loads(new_job.data)
+
+    return None
+
+
+def get_job(request):
+    job_id = request.GET.get('jobid')
+    if job_id == None:
+        return HttpResponseBadRequest()
+    return _get_job(request, job_id)

@@ -19,6 +19,10 @@ from revproxy.views import ProxyView
 from . import views
 
 urlpatterns = [
+    url(r'^_/job/save', views.save_job, name='save_job'),
+    url(r'^_/job/get', views.get_job, name='get_job'),
+    url(r'^_/job/del', views.delete_saved_job, name='delete_saved'),
+    url(r'^_/jobs/saved', views.get_saved_jobs, name='get_saved_jobs'),
     url(r'^_/jobs', views.jobs, name='jobs'),
     url(r'^admin/', admin.site.urls),
     url(r'^(?P<path>.*)$', ProxyView.as_view(upstream='http://localhost:3000/')),

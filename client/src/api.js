@@ -27,3 +27,36 @@ export function sendJobsRequest(job, location) {
     .then(checkHttpResponseStatus)
     .then(response => response.json());
 }
+
+export function sendSaveJobRequest(jobId) {
+  let params = {
+    jobid: jobId
+  };
+  return fetch("_/job/save?" + encodeQuery(params))
+    .then(checkHttpResponseStatus)
+}
+
+export function sendGetJobRequest(jobId) {
+  let params = {
+    jobid: jobId
+  };
+  return fetch("_/job/get?" + encodeQuery(params))
+    .then(checkHttpResponseStatus)
+    .then(response => response.json());
+}
+
+export function sendDeleteSavedJobRequest(jobId) {
+  let params = {
+    jobid: jobId
+  };
+  return fetch("_/job/del?" + encodeQuery(params))
+    .then(checkHttpResponseStatus)
+}
+
+export function sendGetAllSavedJobsRequest() {
+  let params = {
+  };
+  return fetch("_/jobs/saved?" + encodeQuery(params))
+    .then(checkHttpResponseStatus)
+    .then(response => response.json());
+}

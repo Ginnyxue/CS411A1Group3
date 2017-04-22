@@ -1,16 +1,56 @@
 import React, {Component} from "react";
-import GoogleMapReact from "google-map-react";
+import {GoogleMap, InfoWindow, Marker, withGoogleMap} from "react-google-maps";
 import {fitBounds} from "google-map-react/utils";
 import {parse as parseQuery, stringify as encodeQuery} from "query-string";
 import SearchPanel from "./SearchPanel";
 import costs from "../../public/costs.json";
 import {Checkbox} from "semantic-ui-react";
-import {sendJobsRequest} from "../api";
+import {sendDeleteSavedJobRequest, sendGetAllSavedJobsRequest, sendJobsRequest, sendSaveJobRequest} from "../api";
 
 const BASE_URL = "/search";
 
 const FIELD_JOB = "job";
 const FIELD_LOCATION = "location";
+
+
+// Wrap all `react-google-maps` components with `withGoogleMap` HOC
+// and name it GettingStartedGoogleMap
+const GettingStartedGoogleMap = withGoogleMap(props => (
+  <GoogleMap
+    ref={props.onMapLoad}
+    defaultZoom={3}
+    defaultCenter={{lat: -25.363882, lng: 131.044922}}
+    onClick={props.onMapClick}
+  >
+    {props.markers.map((marker, index) => {
+      let window = <div/>;
+      if (marker.infoWindow && marker.key in props.selectedMarkers) {
+        window = (
+          <InfoWindow>
+            <div>
+              <h2>{marker.infoWindow.title}</h2>
+              <p>{marker.infoWindow.body}</p>
+              <Checkbox
+                checked={marker.key in props.savedJobs && props.savedJobs[marker.key]}
+                onChange={(event, data) => {
+                  props.onSaveJob(marker.key, data.checked)
+                }}
+                label='Save'/>
+            </div>
+          </InfoWindow>
+        );
+      }
+
+      return (<Marker
+        {...marker}
+        onClick={() => props.onMarkerClick(index)}
+        onRightClick={() => props.onMarkerRightClick(index)}
+      >
+        {marker.infoWindow && window}
+      </Marker>);
+    })}
+  </GoogleMap>
+));
 
 class SearchPage extends Component {
   constructor(props) {
@@ -19,12 +59,15 @@ class SearchPage extends Component {
     this.markers = [];
     this.state = {
       center: {
-        lat: 51.5,
-        lng: 0
+        lat: 40,
+        lng: -80
       },
-      zoom: 11,
+      zoom: 3,
       showCost: true,
-      jobs: []
+      jobs: [],
+      markers: [],
+      selectedMarkers: {},
+      savedJobs: {}
     };
   }
 
@@ -62,79 +105,91 @@ class SearchPage extends Component {
       }
     });
 
+    this.setState({
+      jobs: [],
+      markers: [],
+      selectedMarkers: {}
+    });
+
     // Do a search for the jobs
     sendJobsRequest(job, location).then(results => {
       console.log(results);
 
-      this.setState({
-        jobs: results.jobs
-      });
-      this.updateMapMarkers();
-    });
-  };
+      const newJobs = results.jobs;
 
-  handleGoogleMapLoad = ({map, maps}) => {
-    this.map = map;
-    this.placesService = new google.maps.places.PlacesService(map);
-    this.heatmap = new google.maps.visualization.HeatmapLayer({
-      data: this.getPoints(),
-      map: map
-    });
-
-    let queryParams = parseQuery(this.props.location.search);
-    const job = (queryParams[FIELD_JOB] ? queryParams[FIELD_JOB] : "");
-    const location = (queryParams[FIELD_LOCATION] ? queryParams[FIELD_LOCATION] : "");
-    if (job && location) {
-      this.doSearch(job, location);
-    }
-  };
-
-  updateMapMarkers = () => {
-    if (this.map) {
-      this.markers.forEach((marker) => {
-        marker.setMap(null);
-      });
-      this.markers = null;
-
-      this.markers = this.state.jobs.filter((job) => {
+      const newMarkers = newJobs.filter((job) => {
         if (job.latitude && job.longitude) {
           return true;
         }
         return false;
       }).map((job) => {
-
-        const contentWindow = '<div>' +
-            '<h1>' + job.jobtitle + '</h1>' +
-            '<p>' + job.snippet + '</p>' +
-            '</div>';
-
-        let infoWindow = new google.maps.InfoWindow({
-          content: contentWindow
-        });
-
-        let marker = new google.maps.Marker({
+        let marker = {
           position: {
             lat: job.latitude,
             lng: job.longitude
           },
-          map: this.map,
-          title: job.title
-        });
+          key: job.jobkey,
+        };
 
-        marker.addListener('click', () => {
-          infoWindow.open(this.map, marker);
-        });
+        marker.infoWindow = {
+          title: job.jobtitle,
+          body: job.snippet
+        };
 
         return marker;
       });
+
+      this.setState({
+        jobs: newJobs,
+        markers: newMarkers
+      })
+    });
+  };
+
+  handleMapLoad = (map) => {
+    if (map) {
+      this.map = map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+      this.placesService = new google.maps.places.PlacesService(this.map);
+      this.heatmap = new google.maps.visualization.HeatmapLayer({
+        data: this.getPoints(),
+        map: this.map,
+      });
+
+      let queryParams = parseQuery(this.props.location.search);
+      const job = (queryParams[FIELD_JOB] ? queryParams[FIELD_JOB] : "");
+      const location = (queryParams[FIELD_LOCATION] ? queryParams[FIELD_LOCATION] : "");
+      if (job && location) {
+        this.doSearch(job, location);
+        this.updateSavedJobsList();
+      }
     }
   };
 
+  handleMapClick = (event) => {
+  };
+
+  handleMarkerClick = (targetMarker) => {
+    let marker = this.state.markers[targetMarker];
+    let newSelected = this.state.selectedMarkers;
+    newSelected[marker.key] = (marker.key in newSelected ? null : true);
+    this.setState({
+      selectedMarkers: newSelected
+    });
+  };
+
+  handleMarkerRightClick = (targetMarker) => {
+  };
+
   getPoints = () => {
-    return costs.map(value => {
+    return costs.filter(value => {
+      if (value.year === "2011") {
+        return true;
+      }
+      return false;
+    }).map(value => {
       return {
-        location: new google.maps.LatLng(value.lat, value.lng),
-        weight: value.cost
+        location: new google.maps.LatLng(Number(value.lat), Number(value.lng)),
+        weight: Number(value.cost)
       };
     });
   };
@@ -145,6 +200,36 @@ class SearchPage extends Component {
       showCost: value
     });
     this.heatmap.setMap(value ? this.map : null);
+  };
+
+  handleToggleSaveJob = (jobId, save) => {
+    let newSaved = this.state.savedJobs;
+    newSaved[jobId] = save;
+    this.setState({
+      savedJobs: newSaved
+    });
+
+    if (save) {
+      sendSaveJobRequest(jobId).then((res) => {
+        this.updateSavedJobsList();
+      });
+    } else {
+      sendDeleteSavedJobRequest(jobId).then((res) => {
+        this.updateSavedJobsList();
+      });
+    }
+  };
+
+  updateSavedJobsList = () => {
+    sendGetAllSavedJobsRequest().then((res) => {
+      let newSaved = {};
+      res.jobs.forEach((job) => {
+        newSaved[job.jobkey] = true;
+      });
+      this.setState({
+        savedJobs: newSaved
+      });
+    });
   };
 
   render() {
@@ -160,13 +245,22 @@ class SearchPage extends Component {
       <SearchPanel
         initialValues={queryParams}
         onSubmit={this.handleSearch}/>
-      <GoogleMapReact
-        defaultCenter={this.state.center}
-        defaultZoom={this.state.zoom}
-        onGoogleApiLoaded={this.handleGoogleMapLoad}
-        yesIWantToUseGoogleMapApiInternals
-      >
-      </GoogleMapReact>
+      <GettingStartedGoogleMap
+        containerElement={
+          <div style={{height: `100%`}}/>
+        }
+        mapElement={
+          <div style={{height: `100%`}}/>
+        }
+        onMapLoad={this.handleMapLoad}
+        onMapClick={this.handleMapClick}
+        markers={this.state.markers}
+        selectedMarkers={this.state.selectedMarkers}
+        savedJobs={this.state.savedJobs}
+        onSaveJob={this.handleToggleSaveJob}
+        onMarkerClick={this.handleMarkerClick}
+        onMarkerRightClick={this.handleMarkerRightClick}
+      />
       <Checkbox
         name="showCost"
         checked={this.state.showCost}
