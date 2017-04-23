@@ -202,4 +202,6 @@ def get_job(request):
     job_id = request.GET.get('jobid')
     if job_id == None:
         return HttpResponseBadRequest()
-    return _get_job(request, job_id)
+    return JsonResponse({
+        'job': _get_job(request, job_id)
+    })

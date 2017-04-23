@@ -67,7 +67,8 @@ class SearchPage extends Component {
       jobs: [],
       markers: [],
       selectedMarkers: {},
-      savedJobs: {}
+      savedJobs: {},
+      loading: false
     };
   }
 
@@ -84,6 +85,11 @@ class SearchPage extends Component {
   };
 
   doSearch = (job, location) => {
+    // Don't make requests if already making one
+    if (this.state.loading) {
+      return;
+    }
+
     // Do a search for the location
     let request = {
       query: location
@@ -108,14 +114,21 @@ class SearchPage extends Component {
     this.setState({
       jobs: [],
       markers: [],
-      selectedMarkers: {}
+      selectedMarkers: {},
+      loading: true
     });
 
     // Do a search for the jobs
     sendJobsRequest(job, location).then(results => {
       console.log(results);
 
-      const newJobs = results.jobs;
+      let newJobs = results.jobs;
+      let uniqueKeys = new Set();
+      newJobs = newJobs.filter(job => {
+        let contains = uniqueKeys.has(job.jobkey);
+        uniqueKeys.add(job.jobkey);
+        return contains == false;
+      });
 
       const newMarkers = newJobs.filter((job) => {
         if (job.latitude && job.longitude) {
@@ -141,7 +154,8 @@ class SearchPage extends Component {
 
       this.setState({
         jobs: newJobs,
-        markers: newMarkers
+        markers: newMarkers,
+        loading: false
       })
     });
   };
@@ -185,7 +199,7 @@ class SearchPage extends Component {
       if (value.year === "2011") {
         return true;
       }
-      return false;
+      return true;
     }).map(value => {
       return {
         location: new google.maps.LatLng(Number(value.lat), Number(value.lng)),
@@ -272,6 +286,9 @@ class SearchPage extends Component {
           <img alt="Indeed" src="https://www.indeed.com/p/jobsearch.gif" style={{border: 0, verticalAlign: "middle"}}/>
         </a>
       </span>
+      {
+        (this.state.loading ? "Loading..." : "")
+      }
     </div>);
   }
 }
