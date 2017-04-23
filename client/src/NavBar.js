@@ -7,6 +7,7 @@ class NavBar extends Component {
 
     let location = window.location.pathname.replace("/", "");
     this.state = {
+      loggedIn: false,
       active: location
     };
   }
@@ -16,6 +17,11 @@ class NavBar extends Component {
     this.setState({
       active: info.name
     })
+  };
+
+  handleLogout = (event, info) => {
+    this.context.router.history.push("/");
+    // TODO - log out
   };
 
   render() {
@@ -28,7 +34,9 @@ class NavBar extends Component {
                    active={this.state.active === 'saved'}
                    onClick={this.handleItemClick}/>
         <Menu.Menu position='right'>
-          <Menu.Item name='logout'/>
+          {this.state.loggedIn &&
+          <Menu.Item name='logout' onClick={this.handleLogout}/>
+          }
         </Menu.Menu>
       </Menu>
     </div>);

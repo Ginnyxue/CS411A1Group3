@@ -2,12 +2,11 @@ import React from "react";
 import {render} from "react-dom";
 import {BrowserRouter, Route} from "react-router-dom";
 
-import App from "./App";
 import SearchPage from "./search/SearchPage";
-import JobListPage from "./JobListPage";
-import JobForms from "./JobForms";
+import JobListPage from "./joblist/JobListPage";
+import LoginPage from "./login/LoginPage";
 import NavBar from "./NavBar";
-
+import JobDetailPage from "./jobdetail/JobDetailPage";
 
 render(
   (<BrowserRouter>
@@ -17,10 +16,10 @@ render(
       flexFlow: "column",
     }}>
       <NavBar/>
-      <Route exact path="/" component={App}/>
+      <Route exact path="/" component={LoginPage}/>
       <Route path="/search" component={SearchPage}/>
-      <Route path="/jobs" component={JobListPage}/>
-      <Route path="/forms" component={JobForms}/>
+      <Route path="/saved" component={JobListPage}/>
+      <Route path="/job/:id" component={JobDetailPage}/>
     </div>
   </BrowserRouter>),
   document.querySelector('#app'));

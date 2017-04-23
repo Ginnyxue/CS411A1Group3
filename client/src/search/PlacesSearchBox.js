@@ -32,7 +32,9 @@ class PlacesSearchBox extends React.Component {
   }
 
   componentWillUnmount() {
-    this.searchBox.removeListener('places_changed', this.onPlacesChanged);
+    if (this.searchBox) {
+      //this.searchBox.removeListener('places_changed', this.onPlacesChanged);
+    }
   }
 
   render() {
