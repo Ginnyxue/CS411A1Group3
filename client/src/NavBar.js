@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from "react";
-import {Menu, Icon} from "semantic-ui-react";
+import {Menu} from "semantic-ui-react";
+import {isLoggedIn, logOut} from "./api";
 
 class NavBar extends Component {
   constructor(props) {
@@ -7,7 +8,7 @@ class NavBar extends Component {
 
     let location = window.location.pathname.replace("/", "");
     this.state = {
-      loggedIn: false,
+      loggedIn: isLoggedIn(),
       active: location
     };
   }
@@ -21,7 +22,10 @@ class NavBar extends Component {
 
   handleLogout = (event, info) => {
     this.context.router.history.push("/");
-    // TODO - log out
+    logOut();
+    this.setState({
+      loggedIn: false
+    })
   };
 
   render() {
@@ -33,9 +37,11 @@ class NavBar extends Component {
         <Menu.Item name='search'
                    active={this.state.active === 'search'}
                    onClick={this.handleItemClick}/>
+        {this.state.loggedIn &&
         <Menu.Item name='saved'
                    active={this.state.active === 'saved'}
                    onClick={this.handleItemClick}/>
+        }
         <Menu.Menu position='right'>
           {this.state.loggedIn &&
           <Menu.Item name='logout' onClick={this.handleLogout}/>

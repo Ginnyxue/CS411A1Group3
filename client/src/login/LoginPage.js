@@ -1,8 +1,7 @@
 import React, {Component} from "react";
-import { GoogleLogin } from 'react-google-login-component';
-import SearchPage from "../search/SearchPage";
-import {Button, Header, Container} from "semantic-ui-react";
-import {sendLoginRequest} from "../api";
+import {GoogleLogin} from "react-google-login-component";
+import {Button, Container, Header} from "semantic-ui-react";
+import {isLoggedIn, logOut, sendLoginRequest} from "../api";
 // import { Segment } from 'semantic-ui-react';
 // import introduction from "./introduction.js"
 
@@ -13,14 +12,14 @@ class LoginPage extends Component {
     this.state = {
       loggedIn: false,
       active: location
-    }; 
+    };
   }
 
   handleItemClick = (event) => {
-    this.props.history.push("/search" );
-};
+    this.props.history.push("/search");
+  };
 
-  responseGoogle (googleUser) {
+  responseGoogle(googleUser) {
     var id_token = googleUser.getAuthResponse().id_token;
     // console.log({accessToken: id_token});
     sendLoginRequest(id_token);
@@ -32,28 +31,25 @@ class LoginPage extends Component {
   render() {
     return (
       <div>
-      <p/>
-      <Container>
-        <Header as='h2'>Introduction</Header>
-        <p>This Web app is used to search jobs.</p>
-        &emsp;&emsp;
-        <GoogleLogin socialId="281760633220-2v3ghd8r64na3hocs7snfftp57sisq0g.apps.googleusercontent.com"
-                     class="ui button"
-                     scope="profile"
-                     responseHandler={this.responseGoogle}
-                     buttonText=" Login With Google"
-                     />
         <p/>
-        <Button class="ui button" onClick={this.handleItemClick}>Continue as a Guest</Button>
+        <Container>
+          <Header as='h2'>Introduction</Header>
+          <p>This Web app is used to search jobs.</p>
+          { !isLoggedIn() &&
+          <div>
+            <GoogleLogin socialId="281760633220-2v3ghd8r64na3hocs7snfftp57sisq0g.apps.googleusercontent.com"
+                         class="ui button"
+                         scope="profile"
+                         responseHandler={this.responseGoogle}
+                         buttonText="Login With Google"
+            />
+            <Button onClick={this.handleItemClick}>Continue as a Guest</Button>
+          </div>
+          }
         </Container>
       </div>
     );
   }
 }
-
-// LoginPage.contextTypes = {
-//   router: PropTypes.object
-// };
-
 
 export default LoginPage;

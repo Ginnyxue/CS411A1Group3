@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import JobList from "./JobList";
-import {sendGetAllSavedJobsRequest} from "../api";
+import {isLoggedIn, sendGetAllSavedJobsRequest} from "../api";
 import {Header} from "semantic-ui-react";
 
 class JobListPage extends Component {
@@ -10,6 +10,11 @@ class JobListPage extends Component {
     this.state = {
       jobs: []
     };
+
+
+    if (!isLoggedIn()) {
+      this.context.router.history.push("/");
+    }
   }
 
   componentDidMount() {

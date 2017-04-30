@@ -5,7 +5,10 @@ import {parse as parseQuery, stringify as encodeQuery} from "query-string";
 import SearchPanel from "./SearchPanel";
 import costs from "../../public/costs.json";
 import {Checkbox} from "semantic-ui-react";
-import {sendDeleteSavedJobRequest, sendGetAllSavedJobsRequest, sendJobsRequest, sendSaveJobRequest} from "../api";
+import {
+  isLoggedIn, sendDeleteSavedJobRequest, sendGetAllSavedJobsRequest, sendJobsRequest,
+  sendSaveJobRequest
+} from "../api";
 
 const BASE_URL = "/search";
 
@@ -30,12 +33,14 @@ const GettingStartedGoogleMap = withGoogleMap(props => (
             <div>
               <h2>{marker.infoWindow.title}</h2>
               <p>{marker.infoWindow.body}</p>
+              {isLoggedIn() &&
               <Checkbox
                 checked={marker.key in props.savedJobs && props.savedJobs[marker.key]}
                 onChange={(event, data) => {
                   props.onSaveJob(marker.key, data.checked)
                 }}
                 label='Save'/>
+              }
             </div>
           </InfoWindow>
         );
