@@ -36,12 +36,14 @@ class LoginPage extends Component {
       <Container>
         <Header as='h2'>Introduction</Header>
         <p>This Web app is used to search jobs.</p>
-        <Button><GoogleLogin socialId="281760633220-2v3ghd8r64na3hocs7snfftp57sisq0g.apps.googleusercontent.com"
-                     class="google-login"
+        &emsp;&emsp;
+        <GoogleLogin socialId="281760633220-2v3ghd8r64na3hocs7snfftp57sisq0g.apps.googleusercontent.com"
+                     class="ui button"
                      scope="profile"
                      responseHandler={this.responseGoogle}
-                     buttonText="Login With Google"/></Button>
-        &emsp;&emsp;
+                     buttonText=" Login With Google"
+                     />
+        <p/>
         <Button class="ui button" onClick={this.handleItemClick}>Continue as a Guest</Button>
         </Container>
       </div>
