@@ -60,3 +60,11 @@ export function sendGetAllSavedJobsRequest() {
     .then(checkHttpResponseStatus)
     .then(response => response.json());
 }
+
+export function sendLoginRequest(id_token) {
+  let params = {
+    token: id_token
+  };
+  return fetch("/_/login?" + encodeQuery(params))
+    .then(checkHttpResponseStatus)
+}

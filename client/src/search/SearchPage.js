@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {GoogleMap, InfoWindow, Marker, withGoogleMap} from "react-google-maps";
-import {fitBounds} from "google-map-react/utils";
+// import {fitBounds} from "google-map-react/utils";
 import {parse as parseQuery, stringify as encodeQuery} from "query-string";
 import SearchPanel from "./SearchPanel";
 import costs from "../../public/costs.json";

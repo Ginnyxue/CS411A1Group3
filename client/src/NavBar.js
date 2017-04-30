@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from "react";
-import {Menu} from "semantic-ui-react";
+import {Menu, Icon} from "semantic-ui-react";
 
 class NavBar extends Component {
   constructor(props) {
@@ -27,6 +27,9 @@ class NavBar extends Component {
   render() {
     return (<div>
       <Menu pointing secondary>
+        <Menu.Item name='home'
+                   active={this.state.active === 'home'}
+                   onClick={this.handleItemClick}/>
         <Menu.Item name='search'
                    active={this.state.active === 'search'}
                    onClick={this.handleItemClick}/>

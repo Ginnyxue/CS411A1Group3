@@ -16,7 +16,7 @@ render(
       flexFlow: "column",
     }}>
       <NavBar/>
-      <Route exact path="/" component={LoginPage}/>
+      <Route exact path="/home" component={LoginPage}/>
       <Route path="/search" component={SearchPage}/>
       <Route path="/saved" component={JobListPage}/>
       <Route path="/job/:id" component={JobDetailPage}/>
