@@ -14,7 +14,9 @@ class LoginPage extends Component {
       loggedIn: isLoggedIn(),
       active: location
     };
+  }
 
+  componentWillMount() {
     if (isLoggedIn()) {
       this.props.history.push("/search");
     }

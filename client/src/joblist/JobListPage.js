@@ -11,19 +11,18 @@ class JobListPage extends Component {
     this.state = {
       jobs: []
     };
-
-
-    if (!isLoggedIn()) {
-      this.context.router.history.push("/");
-    }
   }
 
   componentDidMount() {
-    sendGetAllSavedJobsRequest().then((res) => {
-      this.setState({
-        jobs: res.jobs
+    if (!isLoggedIn()) {
+      this.props.history.push("/");
+    } else {
+      sendGetAllSavedJobsRequest().then((res) => {
+        this.setState({
+          jobs: res.jobs
+        });
       });
-    });
+    }
   }
 
   handleJobClick = (job) => {
