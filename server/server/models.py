@@ -13,7 +13,7 @@ class SearchResult(models.Model):
 
 
 class User(models.Model):
-    g_id = models.BigIntegerField()
+    g_id = models.CharField(max_length=200)
 
 
 class SavedJob(models.Model):

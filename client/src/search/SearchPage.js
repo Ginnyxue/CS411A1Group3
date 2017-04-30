@@ -6,9 +6,13 @@ import SearchPanel from "./SearchPanel";
 import costs from "../../public/costs.json";
 import {Checkbox} from "semantic-ui-react";
 import {
-  isLoggedIn, sendDeleteSavedJobRequest, sendGetAllSavedJobsRequest, sendJobsRequest,
+  isLoggedIn,
+  sendDeleteSavedJobRequest,
+  sendGetAllSavedJobsRequest,
+  sendJobsRequest,
   sendSaveJobRequest
 } from "../api";
+import NavBar from "../NavBar";
 
 const BASE_URL = "/search";
 
@@ -255,46 +259,55 @@ class SearchPage extends Component {
     let queryParams = parseQuery(this.props.location.search);
 
 
-    return (<div style={{
-      flex: 1,
-      display: "flex",
-      flexFlow: "column",
-      padding: 20
-    }}>
-      <SearchPanel
-        initialValues={queryParams}
-        onSubmit={this.handleSearch}/>
-      <GettingStartedGoogleMap
-        containerElement={
-          <div style={{height: `100%`}}/>
-        }
-        mapElement={
-          <div style={{height: `100%`}}/>
-        }
-        onMapLoad={this.handleMapLoad}
-        onMapClick={this.handleMapClick}
-        markers={this.state.markers}
-        selectedMarkers={this.state.selectedMarkers}
-        savedJobs={this.state.savedJobs}
-        onSaveJob={this.handleToggleSaveJob}
-        onMarkerClick={this.handleMarkerClick}
-        onMarkerRightClick={this.handleMarkerRightClick}
-      />
-      <Checkbox
-        name="showCost"
-        checked={this.state.showCost}
-        onChange={this.handleToggleHeatmap}
-        label='Show Cost of Living'/>
-      <span id="indeed_at">
+    return (
+      <div style={{
+          flex: 1,
+          display: "flex",
+          flexFlow: "column",
+        }}>
+        <NavBar/>
+        <div style={{
+          flex: 1,
+          display: "flex",
+          flexFlow: "column",
+          padding: 20
+        }}>
+          <SearchPanel
+            initialValues={queryParams}
+            onSubmit={this.handleSearch}/>
+          <GettingStartedGoogleMap
+            containerElement={
+              <div style={{height: `100%`}}/>
+            }
+            mapElement={
+              <div style={{height: `100%`}}/>
+            }
+            onMapLoad={this.handleMapLoad}
+            onMapClick={this.handleMapClick}
+            markers={this.state.markers}
+            selectedMarkers={this.state.selectedMarkers}
+            savedJobs={this.state.savedJobs}
+            onSaveJob={this.handleToggleSaveJob}
+            onMarkerClick={this.handleMarkerClick}
+            onMarkerRightClick={this.handleMarkerRightClick}
+          />
+          <Checkbox
+            name="showCost"
+            checked={this.state.showCost}
+            onChange={this.handleToggleHeatmap}
+            label='Show Cost of Living'/>
+          <span id="indeed_at">
         <a title="Job Search" href="https://www.indeed.com" rel="nofollow">
             jobs by
           <img alt="Indeed" src="https://www.indeed.com/p/jobsearch.gif" style={{border: 0, verticalAlign: "middle"}}/>
         </a>
       </span>
-      {
-        (this.state.loading ? "Loading..." : "")
-      }
-    </div>);
+          {
+            (this.state.loading ? "Loading..." : "")
+          }
+        </div>
+      </div>
+    );
   }
 }
 

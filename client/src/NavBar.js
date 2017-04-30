@@ -28,12 +28,16 @@ class NavBar extends Component {
     })
   };
 
+  handleLogIn = (event, info) => {
+    this.context.router.history.push("/");
+    this.setState({
+      loggedIn: false
+    })
+  };
+
   render() {
     return (<div>
       <Menu pointing secondary>
-        <Menu.Item name='home'
-                   active={this.state.active === 'home'}
-                   onClick={this.handleItemClick}/>
         <Menu.Item name='search'
                    active={this.state.active === 'search'}
                    onClick={this.handleItemClick}/>
@@ -45,6 +49,9 @@ class NavBar extends Component {
         <Menu.Menu position='right'>
           {this.state.loggedIn &&
           <Menu.Item name='logout' onClick={this.handleLogout}/>
+          }
+          {!this.state.loggedIn &&
+          <Menu.Item name='login' onClick={this.handleLogIn}/>
           }
         </Menu.Menu>
       </Menu>

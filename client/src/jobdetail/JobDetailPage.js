@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import {sendGetJobRequest} from "../api";
+import NavBar from "../NavBar";
 
 class JobDetailPage extends Component {
   constructor(props) {
@@ -27,12 +28,19 @@ class JobDetailPage extends Component {
         flex: 1,
         display: "flex",
         flexFlow: "column",
-        padding: 20
       }}>
-        Job Detail Page
-        <pre>
+        <NavBar/>
+        <div style={{
+          flex: 1,
+          display: "flex",
+          flexFlow: "column",
+          padding: 20
+        }}>
+          Job Detail Page
+          <pre>
           {JSON.stringify(this.state.job, null, 2)}
         </pre>
+        </div>
       </div>
     );
   }

@@ -20,6 +20,7 @@ export function createJsonPostRequest(body) {
 
 export function sendJobsRequest(job, location) {
   let params = {
+    user: getUserId(),
     job: job,
     location: location
   };
@@ -30,6 +31,7 @@ export function sendJobsRequest(job, location) {
 
 export function sendSaveJobRequest(jobId) {
   let params = {
+    user: getUserId(),
     jobid: jobId
   };
   return fetch("/_/job/save?" + encodeQuery(params))
@@ -38,6 +40,7 @@ export function sendSaveJobRequest(jobId) {
 
 export function sendGetJobRequest(jobId) {
   let params = {
+    user: getUserId(),
     jobid: jobId
   };
   return fetch("/_/job/get?" + encodeQuery(params))
@@ -47,6 +50,7 @@ export function sendGetJobRequest(jobId) {
 
 export function sendDeleteSavedJobRequest(jobId) {
   let params = {
+    user: getUserId(),
     jobid: jobId
   };
   return fetch("/_/job/del?" + encodeQuery(params))
@@ -55,6 +59,7 @@ export function sendDeleteSavedJobRequest(jobId) {
 
 export function sendGetAllSavedJobsRequest() {
   let params = {
+    user: getUserId(),
   };
   return fetch("/_/jobs/saved?" + encodeQuery(params))
     .then(checkHttpResponseStatus)
@@ -67,6 +72,10 @@ export function sendLoginRequest(id_token) {
   };
   return fetch("/_/login?" + encodeQuery(params))
     .then(checkHttpResponseStatus)
+    .then(response => response.json())
+    .then((req) => {
+      createCookie("user_id", req.user_id, 10);
+    });
 }
 
 // Cookie functions: http://stackoverflow.com/a/24103596/7384501
@@ -98,6 +107,10 @@ function eraseCookie(name) {
 export function isLoggedIn() {
   let userId = readCookie("user_id");
   return userId !== null;
+}
+
+function getUserId() {
+  return (isLoggedIn() ? readCookie("user_id") : 0);
 }
 
 export function logOut() {

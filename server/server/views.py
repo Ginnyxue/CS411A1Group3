@@ -3,8 +3,6 @@ import os
 import urllib2
 from urllib import urlencode
 
-import datetime
-
 from careerjet_api_client import CareerjetAPIClient
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
 
@@ -113,8 +111,7 @@ def jobs(request):
 
 
 def save_job(request):
-    # TODO
-    user_id = 0
+    user_id = request.GET.get('user', 0)
     users = User.objects.filter(id=user_id)
     if len(users) == 0:
         return HttpResponseBadRequest()
@@ -135,8 +132,7 @@ def save_job(request):
 
 
 def get_saved_jobs(request):
-    # TODO
-    user_id = 0
+    user_id = request.GET.get('user', 0)
     users = User.objects.filter(id=user_id)
     if len(users) == 0:
         return HttpResponseBadRequest()
@@ -158,8 +154,7 @@ def get_saved_jobs(request):
 
 
 def delete_saved_job(request):
-    # TODO
-    user_id = 0
+    user_id = request.GET.get('user', 0)
     users = User.objects.filter(id=user_id)
     if len(users) == 0:
         return HttpResponseBadRequest()
@@ -202,24 +197,26 @@ def _get_job(request, job_id):
 
 def get_job(request):
     job_id = request.GET.get('jobid')
-    if job_id == None:
+    if job_id is None:
         return HttpResponseBadRequest()
     return JsonResponse({
         'job': _get_job(request, job_id)
     })
 
-	
+
 def get_id(request):
-	token = request.GET.get('token')
-	# get ID
-	users = User.objects.filter(g_id=token)
-	if len(users) == 0:
-		user = User(g_id=token)
+    token = request.GET.get('token')
+    if token is None:
+        return HttpResponseBadRequest()
+    users = User.objects.filter(g_id=token)
+
+    user = None
+    if len(users) == 0:
+        user = User(g_id=token)
         user.save()
-	else:
-		users=users[0]
-	# set session cookie
-	response = HttpResponse("")
-	response.set_cookie("user_id", str(user.id))
-	return response
-	
+    else:
+        user = users[0]
+
+    return JsonResponse({
+        'user_id': user.id
+    })

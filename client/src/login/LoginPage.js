@@ -1,7 +1,8 @@
 import React, {Component} from "react";
 import {GoogleLogin} from "react-google-login-component";
 import {Button, Container, Header} from "semantic-ui-react";
-import {isLoggedIn, logOut, sendLoginRequest} from "../api";
+import {isLoggedIn, sendLoginRequest} from "../api";
+import NavBar from "../NavBar";
 // import { Segment } from 'semantic-ui-react';
 // import introduction from "./introduction.js"
 
@@ -10,27 +11,33 @@ class LoginPage extends Component {
     super(props);
     let location = window.location.pathname.replace("/", "");
     this.state = {
-      loggedIn: false,
+      loggedIn: isLoggedIn(),
       active: location
     };
+
+    if (isLoggedIn()) {
+      this.props.history.push("/search");
+    }
   }
 
   handleItemClick = (event) => {
     this.props.history.push("/search");
   };
 
-  responseGoogle(googleUser) {
-    var id_token = googleUser.getAuthResponse().id_token;
-    // console.log({accessToken: id_token});
-    sendLoginRequest(id_token);
-
-    //anything else you want to do(save to localStorage)... 
+  responseGoogle = (googleUser) => {
+    let id = googleUser.getBasicProfile().getId();
+    sendLoginRequest(id).then(() => {
+      this.props.history.push("/search");
+      this.setState({
+        loggedIn: isLoggedIn()
+      });
+    });
   };
-
 
   render() {
     return (
       <div>
+        <NavBar/>
         <p/>
         <Container>
           <Header as='h2'>Introduction</Header>

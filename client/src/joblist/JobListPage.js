@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import JobList from "./JobList";
 import {isLoggedIn, sendGetAllSavedJobsRequest} from "../api";
 import {Header} from "semantic-ui-react";
+import NavBar from "../NavBar";
 
 class JobListPage extends Component {
   constructor(props) {
@@ -35,13 +36,20 @@ class JobListPage extends Component {
         flex: 1,
         display: "flex",
         flexFlow: "column",
-        padding: 20
       }}>
-        <Header as="h1">Saved Jobs</Header>
-        <JobList
-          jobs={this.state.jobs}
-          onClick={this.handleJobClick}
-        />
+        <NavBar/>
+        <div style={{
+          flex: 1,
+          display: "flex",
+          flexFlow: "column",
+          padding: 20
+        }}>
+          <Header as="h1">Saved Jobs</Header>
+          <JobList
+            jobs={this.state.jobs}
+            onClick={this.handleJobClick}
+          />
+        </div>
       </div>
     );
   }
