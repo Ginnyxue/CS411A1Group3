@@ -3,6 +3,8 @@ import os
 import urllib2
 from urllib import urlencode
 
+import datetime
+
 from careerjet_api_client import CareerjetAPIClient
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
 
@@ -205,3 +207,19 @@ def get_job(request):
     return JsonResponse({
         'job': _get_job(request, job_id)
     })
+
+	
+def get_id(request):
+	token = request.GET.get('token')
+	# get ID
+	users = User.objects.filter(g_id=token)
+	if len(users) == 0:
+		user = User(g_id=token)
+        user.save()
+	else:
+		users=users[0]
+	# set session cookie
+	response = HttpResponse("")
+	response.set_cookie("user_id", str(user.id))
+	return response
+	

@@ -25,5 +25,6 @@ urlpatterns = [
     url(r'^_/jobs/saved', views.get_saved_jobs, name='get_saved_jobs'),
     url(r'^_/jobs', views.jobs, name='jobs'),
     url(r'^admin/', admin.site.urls),
+    url(r'^_/login', views.get_id, name='get_id'),
     url(r'^(?P<path>.*)$', ProxyView.as_view(upstream='http://localhost:3000/')),
 ]
