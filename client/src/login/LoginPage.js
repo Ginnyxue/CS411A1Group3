@@ -50,6 +50,7 @@ class LoginPage extends Component {
                          responseHandler={this.responseGoogle}
                          buttonText="Login With Google"
             />
+            <p/>
             <Button onClick={this.handleItemClick}>Continue as a Guest</Button>
           </div>
           }
