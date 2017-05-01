@@ -1,12 +1,11 @@
 import React, {Component} from "react";
 import {sendGetJobRequest} from "../api";
 import NavBar from "../NavBar";
-<<<<<<< HEAD
 import { Header, Segment, List } from 'semantic-ui-react'
 import {GoogleMap, InfoWindow, Marker, withGoogleMap} from "react-google-maps";
-=======
-import {Header, Segment} from "semantic-ui-react";
->>>>>>> f69ae692e329b668292807b681207771662ed3c5
+
+
+
 
 class JobDetailPage extends Component {
   constructor(props) {
@@ -43,7 +42,7 @@ class JobDetailPage extends Component {
           flexFlow: "column",
           padding: 20
         }}>
-<<<<<<< HEAD
+
          <Header as='h2' attached='top'>
       Job Detail
     </Header>
@@ -81,19 +80,7 @@ class JobDetailPage extends Component {
   </List>
       
     </Segment>
-=======
-          <Header as='h2' attached='top'>
-            Job Detail
-          </Header>
-          <Segment attached>
-            <p>{this.state.job.company}</p>
-            <p>Job Title: {this.state.job.jobtitle}</p>
-            <p>Location: {this.state.job.formattedLocationFull}</p>
-            <p>Description: {this.state.job.snippet}</p>
-            <a href={this.state.job.url}>Explore More</a>
-            <p></p>
-          </Segment>
->>>>>>> f69ae692e329b668292807b681207771662ed3c5
+
           <p></p>
 
         </div>
