@@ -1,5 +1,5 @@
 # CS411 A1 Group 3 #
-# FutureHunt#
+# FutureHunt #
 Find the job
 -------------
 Upon choosing to either log in or continue as a guest user, a user is presented with a zoomed out map with a menu where they can apply desired geofilters for occupation, location, and cost of living. These filters can be set in various ways:
