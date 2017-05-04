@@ -9,4 +9,4 @@ Clicking on a point pops out a small window containing information about the job
 The user can save the job for later by clicking the "Save" checkbox.
 
 ## Save Search Result
-After searching, a logged in user can choose his or her ideal job from the search results. Each job listing has two buttons. Clicking the first one allows the user to view the job details and related information. Clicking the second button allows the user to save the job to his or her favorites list. Users can also add notes to each saved job and filter the list by attributes, such as location or job type.
+After searching, a logged in user can save his or her ideal job from the search results. When the user views his or her saved jobs, they can click on a button to apply directly to the job. They can also view details about the job from the detail page.
